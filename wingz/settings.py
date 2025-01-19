@@ -129,3 +129,5 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
 }
 
+AUTH_USER_MODEL = "ride_app.User"
+
