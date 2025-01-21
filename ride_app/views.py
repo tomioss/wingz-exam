@@ -1,3 +1,6 @@
+from django.db.models import Prefetch
+from django.utils import timezone
+
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import mixins, viewsets
@@ -17,10 +20,20 @@ class RideApiView(
     viewsets.GenericViewSet
 ):
     permission_classes = (IsAuthenticated,)
-    queryset = Ride.objects.all().order_by("id").select_related("id_rider", "id_driver").prefetch_related("ride")
     serializer_class = RideSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RideFilter
+
+    def get_queryset(self):
+        now = timezone.now()
+        start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_date = now.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        queryset = Ride.objects.all().order_by("id").select_related("id_rider", "id_driver").prefetch_related(
+            Prefetch("ride", queryset=RideEvent.objects.filter(created_at__range=(start_date, end_date)))
+        )
+        return queryset
+
 
     def get_serializer_class(self):
         if self.action == "list":

@@ -27,9 +27,21 @@ class RideSerializer(serializers.ModelSerializer):
 class RideListSerializer(serializers.ModelSerializer):
     id_rider = UserSerializer()
     id_driver = UserSerializer()
-    ride = RideEventSerializer(many=True)
+    todays_ride_events = RideEventSerializer(source="ride", many=True)
 
     class Meta:
         model = Ride
-        fields = "__all__"
+        fields = (
+            "status",
+            "id_rider",
+            "id_driver",
+            "pickup_latitude",
+            "pickup_longitude",
+            "dropoff_latitude",
+            "dropoff_longitude",
+            "pickup_time",
+            "todays_ride_events",
+            "created_at",
+            "updated_at",
+        )
 
