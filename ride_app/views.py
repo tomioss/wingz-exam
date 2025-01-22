@@ -4,7 +4,7 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import mixins, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser
 
 from ride_app.filters import RideFilter
 from ride_app.models import Ride, RideEvent
@@ -19,7 +19,7 @@ class RideApiView(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet
 ):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
     serializer_class = RideSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RideFilter
@@ -49,7 +49,7 @@ class RideEventApiView(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet
 ):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
     queryset = RideEvent.objects.all().order_by("id")
     serializer_class = RideEventSerializer
 
