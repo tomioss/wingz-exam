@@ -1,6 +1,10 @@
 from decimal import Decimal, InvalidOperation
 
+from django.db.models import Case, When, Value
+
 from django_filters import rest_framework as filters
+
+from haversine import haversine
 
 from rest_framework.serializers import ValidationError
 
@@ -33,5 +37,14 @@ class RideFilter(filters.FilterSet):
         if len(position) != 2:
             raise ValidationError(error_msg)
 
-        return queryset
+        distances = []
+        for loc in queryset:
+            haversine_distance = haversine(position, (loc.pickup_latitude, loc.pickup_longitude))
+            distances.append((loc.id, haversine_distance))
+
+        distances.sort(key=lambda x: x[1])
+
+        return queryset.annotate(
+            distance=Case(*[When(pk=dist[0], then=Value(dist[1])) for dist in distances])
+        ).order_by("distance")
 
