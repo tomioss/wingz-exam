@@ -1,6 +1,8 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from django_filters import rest_framework as filters
+
+from rest_framework.serializers import ValidationError
 
 from ride_app.models import Ride
 
@@ -22,6 +24,14 @@ class RideFilter(filters.FilterSet):
 
 
     def filter_distance(self, queryset, name, value):
-        position = [Decimal(v) for v in value.split(",")]
+        error_msg = {"position": "parameter only accepts two numbers"}
+        try:
+            position = [Decimal(v) for v in value.split(",")]
+        except InvalidOperation:
+            raise ValidationError(error_msg)
+
+        if len(position) != 2:
+            raise ValidationError(error_msg)
+
         return queryset
 

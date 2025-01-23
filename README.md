@@ -22,19 +22,15 @@ Once you've setup the postman APIs, you can see all the API endpoints.
 # Bonus SQL
 ```
 SELECT 
-	rar.id,
-    (julianday(rre2.created_at) - julianday(rre.created_at)) * 24 AS time_diff_hours
+    strftime('%Y-%m', rar.pickup_time) AS month, 
+    rau.first_name || ' ' || substr(rau.last_name, 1, 1) AS Driver, 
+    count(*) AS 'Count of Trips > 1'
 FROM ride_app_rideevent rre
 INNER JOIN ride_app_rideevent rre2 ON rre.id != rre2.id
 INNER JOIN ride_app_ride rar ON rre.id_ride_id = rar.id
+INNER JOIN ride_app_user rau ON rau.id = rar.id_driver_id
 WHERE rre.description = 'Status changed to pickup' AND rre2.description = 'Status changed to dropoff' 
-	AND rre.id_ride_id = rre2.id_ride_id AND time_diff_hours > 1
-
-SELECT 
-    strftime('%Y-%m', rar.pickup_time) AS month, rau.first_name || ' ' || substr(rau.last_name, 1, 1) AS full_name, rre.description 
-FROM ride_app_ride rar 
-INNER JOIN ride_app_user rau ON rau.id = rar.id_driver_id 
-INNER JOIN ride_app_rideevent rre ON rre.id_ride_id = rar.id
-GROUP BY month, rar.id_driver_id 
+    AND rre.id_ride_id = rre2.id_ride_id AND ((julianday(rre2.created_at) - julianday(rre.created_at)) * 24) > 1
+GROUP BY month, Driver
 ```
 
