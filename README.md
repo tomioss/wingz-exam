@@ -18,6 +18,36 @@ python manage.py createsuperuser
 # Documentation
 Once you've setup the postman APIs, you can see all the API endpoints.
 
+## User API
+* POST /create-user/
+  * Creates a new user
+
+## Ride API
+* POST /ride/
+  * Creates a new ride
+* GET /ride/
+  * Get list of rides
+  * Can filter by status, rider_email, distance
+  * Can sort by ordering pickup_time
+* GET /ride/{id}/
+  * Get ride by id
+* PATCH /ride/{id}/
+  * Update ride by id
+* DELETE /ride/{id}/
+  * Delete ride by id
+
+## Ride Event API
+* POST /ride-event/
+  * Creates a new ride event
+* GET /ride-event/
+  * Get list of ride events
+* GET /ride-event/{id}/
+  * Get ride event by id
+* PATCH /ride-event/{id}/
+  * Update ride event by id
+* DELETE /ride-event/{id}/
+  * Delete ride event by id
+
 
 # Bonus SQL
 ```

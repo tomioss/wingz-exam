@@ -4,11 +4,18 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import mixins, viewsets
-from rest_framework.permissions import IsAdminUser
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import AllowAny, IsAdminUser
 
 from ride_app.filters import RideFilter
-from ride_app.models import Ride, RideEvent
-from ride_app.serializers import RideEventSerializer, RideListSerializer, RideSerializer
+from ride_app.models import Ride, RideEvent, User
+from ride_app.serializers import CreateUserSerializer, RideEventSerializer, RideListSerializer, RideSerializer
+
+
+class CreateUserApiView(CreateAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = CreateUserSerializer
+    model = User
 
 
 class RideApiView(
